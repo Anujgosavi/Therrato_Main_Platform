@@ -1,19 +1,19 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Menu, X } from "lucide-react"
-import { usePathname } from "next/navigation"
-import { cn } from "@/lib/utils"
+import { useState } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Menu, X } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 export default function Header() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const pathname = usePathname()
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   const isActive = (path: string) => {
-    return pathname === path
-  }
+    return pathname === path;
+  };
 
   return (
     <header className="border-b bg-white sticky top-0 z-50">
@@ -25,12 +25,12 @@ export default function Header() {
             </Link>
           </div>
 
-          <nav className="hidden md:flex items-center space-x-6">
+          <nav className="hidden md:flex items-center space-x-10">
             <Link
               href="/therapists"
               className={cn(
                 "text-sm font-medium transition-colors hover:text-emerald-600",
-                isActive("/therapists") ? "text-emerald-600" : "text-gray-600",
+                isActive("/therapists") ? "text-emerald-600" : "text-gray-600"
               )}
             >
               Find Therapists
@@ -39,7 +39,7 @@ export default function Header() {
               href="/appointments"
               className={cn(
                 "text-sm font-medium transition-colors hover:text-emerald-600",
-                isActive("/appointments") ? "text-emerald-600" : "text-gray-600",
+                isActive("/appointments") ? "text-emerald-600" : "text-gray-600"
               )}
             >
               My Appointments
@@ -48,7 +48,7 @@ export default function Header() {
               href="/resources"
               className={cn(
                 "text-sm font-medium transition-colors hover:text-emerald-600",
-                isActive("/resources") ? "text-emerald-600" : "text-gray-600",
+                isActive("/resources") ? "text-emerald-600" : "text-gray-600"
               )}
             >
               Resources
@@ -69,8 +69,16 @@ export default function Header() {
           </div>
 
           <div className="md:hidden">
-            <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
             </Button>
           </div>
         </div>
@@ -108,12 +116,14 @@ export default function Header() {
                 </Button>
               </Link>
               <Link href="/signup" onClick={() => setMobileMenuOpen(false)}>
-                <Button className="w-full bg-emerald-600 hover:bg-emerald-700">Sign up</Button>
+                <Button className="w-full bg-emerald-600 hover:bg-emerald-700">
+                  Sign up
+                </Button>
               </Link>
             </div>
           </div>
         </div>
       )}
     </header>
-  )
+  );
 }

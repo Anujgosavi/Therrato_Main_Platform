@@ -125,7 +125,7 @@ export default function Home() {
             </div>
             <div className="relative">
               <Image
-                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-04-18%20153954-sTDt2Dma1Hax23EhsaMnyYMCcT1zYy.png"
+                src="/main_image.png"
                 alt="Child illustration"
                 width={550}
                 height={550}
