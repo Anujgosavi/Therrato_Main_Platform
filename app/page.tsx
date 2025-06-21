@@ -271,7 +271,7 @@ export default function Home() {
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
                 <Image
-                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-04-18%20154050-hglh3tdpFHlMfzEuYhXuYRi1K4cIjJ.png"
+                  src="/mission.png"
                   alt="Two people smiling at the beach"
                   width={600}
                   height={400}
