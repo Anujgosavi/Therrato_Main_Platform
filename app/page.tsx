@@ -1,3 +1,5 @@
+"use client";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -9,8 +11,12 @@ import {
   Users,
   School,
 } from "lucide-react";
+import AuthModal from "./appointments/AuthModel";
 
 export default function Home() {
+  const [showSignIn, setShowSignIn] = useState(false);
+  const [showSignUp, setShowSignUp] = useState(false);
+
   return (
     <div className="flex flex-col min-h-screen">
       <header className="border-b bg-white sticky top-0 z-10">
@@ -43,6 +49,18 @@ export default function Home() {
             >
               Testimonials
             </Link>
+            <button
+              onClick={() => setShowSignIn(true)}
+              className="ml-4 px-4 py-2 rounded-md border border-emerald-500 text-emerald-500 hover:bg-emerald-50 font-medium transition-colors"
+            >
+              Sign In
+            </button>
+            <button
+              onClick={() => setShowSignUp(true)}
+              className="ml-2 px-4 py-2 rounded-md bg-emerald-500 text-white hover:bg-emerald-600 font-medium transition-colors"
+            >
+              Sign Up
+            </button>
           </nav>
           <Link
             href="/home"
@@ -52,6 +70,29 @@ export default function Home() {
           </Link>
         </div>
       </header>
+
+      {/* Sign In Modal */}
+      {showSignIn && (
+        <AuthModal
+          mode="signin"
+          onClose={() => setShowSignIn(false)}
+          onSwitch={() => {
+            setShowSignIn(false);
+            setShowSignUp(true);
+          }}
+        />
+      )}
+      {/* Sign Up Modal */}
+      {showSignUp && (
+        <AuthModal
+          mode="signup"
+          onClose={() => setShowSignUp(false)}
+          onSwitch={() => {
+            setShowSignUp(false);
+            setShowSignIn(true);
+          }}
+        />
+      )}
 
       <main>
         {/* Hero Section */}
@@ -973,33 +1014,44 @@ export default function Home() {
                   >
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                   </svg>
-                  <svg
-                    className="h-4 w-4 text-yellow-400"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
                 </div>
+                <ul className="space-y-2 mb-6">
+                  <li className="flex items-center text-sm text-gray-600">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500 mr-2" />
+                    <span>Improved academic performance</span>
+                  </li>
+                  <li className="flex items-center text-sm text-gray-600">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500 mr-2" />
+                    <span>Better focus in class</span>
+                  </li>
+                  <li className="flex items-center text-sm text-gray-600">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500 mr-2" />
+                    <span>Increased confidence</span>
+                  </li>
+                  <li className="flex items-center text-sm text-gray-600">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500 mr-2" />
+                    <span>Noticeable changes within weeks</span>
+                  </li>
+                </ul>
               </div>
+            </div>
 
+            <div className="grid md:grid-cols-3 gap-8 mb-12">
               <div className="bg-white p-6 rounded-lg shadow-sm">
                 <div className="flex items-center mb-4">
                   <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center mr-3">
-                    <span className="font-bold text-emerald-500">RJ</span>
+                    <span className="font-bold text-emerald-500">AW</span>
                   </div>
                   <div>
-                    <p className="font-bold">Robert Johnson</p>
-                    <p className="text-sm text-gray-600">
-                      Father of 9-year-old with dysgraphia
-                    </p>
+                    <p className="font-bold">Amanda Wilson</p>
+                    <p className="text-sm text-gray-600">School Psychologist</p>
                   </div>
                 </div>
                 <p className="text-gray-600 mb-4">
-                  "My son would get so frustrated with writing assignments.
-                  After using Therreto's tools and working with their
-                  specialists, he's developed strategies that have reduced his
-                  anxiety and improved his writing skills."
+                  "Therreto has transformed our assessment process at school.
+                  The detailed reports help us create more targeted IEPs, and
+                  the parent resources ensure continuity between school and home
+                  interventions."
                 </p>
                 <div className="flex">
                   <svg
@@ -1030,33 +1082,44 @@ export default function Home() {
                   >
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                   </svg>
-                  <svg
-                    className="h-4 w-4 text-yellow-400"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
                 </div>
+                <ul className="space-y-2 mb-6">
+                  <li className="flex items-center text-sm text-gray-600">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500 mr-2" />
+                    <span>Improved academic performance</span>
+                  </li>
+                  <li className="flex items-center text-sm text-gray-600">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500 mr-2" />
+                    <span>Better focus in class</span>
+                  </li>
+                  <li className="flex items-center text-sm text-gray-600">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500 mr-2" />
+                    <span>Increased confidence</span>
+                  </li>
+                  <li className="flex items-center text-sm text-gray-600">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500 mr-2" />
+                    <span>Noticeable changes within weeks</span>
+                  </li>
+                </ul>
               </div>
+            </div>
 
+            <div className="grid md:grid-cols-3 gap-8 mb-12">
               <div className="bg-white p-6 rounded-lg shadow-sm">
                 <div className="flex items-center mb-4">
                   <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center mr-3">
-                    <span className="font-bold text-emerald-500">DR</span>
+                    <span className="font-bold text-emerald-500">AW</span>
                   </div>
                   <div>
-                    <p className="font-bold">David Rodriguez</p>
-                    <p className="text-sm text-gray-600">
-                      Father of 9-year-old with dyslexia
-                    </p>
+                    <p className="font-bold">Amanda Wilson</p>
+                    <p className="text-sm text-gray-600">School Psychologist</p>
                   </div>
                 </div>
                 <p className="text-gray-600 mb-4">
-                  "Therreto's assessments identified my son's specific dyslexia
-                  challenges in ways previous testing couldn't. The personalized
-                  strategies have made a world of difference in his reading
-                  confidence."
+                  "Therreto has transformed our assessment process at school.
+                  The detailed reports help us create more targeted IEPs, and
+                  the parent resources ensure continuity between school and home
+                  interventions."
                 </p>
                 <div className="flex">
                   <svg
@@ -1087,14 +1150,25 @@ export default function Home() {
                   >
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                   </svg>
-                  <svg
-                    className="h-4 w-4 text-yellow-400"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
                 </div>
+                <ul className="space-y-2 mb-6">
+                  <li className="flex items-center text-sm text-gray-600">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500 mr-2" />
+                    <span>Improved academic performance</span>
+                  </li>
+                  <li className="flex items-center text-sm text-gray-600">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500 mr-2" />
+                    <span>Better focus in class</span>
+                  </li>
+                  <li className="flex items-center text-sm text-gray-600">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500 mr-2" />
+                    <span>Increased confidence</span>
+                  </li>
+                  <li className="flex items-center text-sm text-gray-600">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500 mr-2" />
+                    <span>Noticeable changes within weeks</span>
+                  </li>
+                </ul>
               </div>
             </div>
 
@@ -1155,6 +1229,7 @@ export default function Home() {
                         type="text"
                         id="firstName"
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        placeholder="Your Name"
                         required
                       />
                     </div>
@@ -1169,6 +1244,7 @@ export default function Home() {
                         type="text"
                         id="lastName"
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        placeholder="Your Last Name"
                         required
                       />
                     </div>
@@ -1183,6 +1259,7 @@ export default function Home() {
                         type="email"
                         id="email"
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        placeholder="you@email.com"
                         required
                       />
                     </div>
