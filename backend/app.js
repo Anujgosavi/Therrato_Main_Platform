@@ -1,6 +1,13 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 
+app.use(
+  cors({
+    origin: "http://localhost:3001", // <-- set this to your frontend port
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 const therapistRoutes = require("./routes/therapistRoutes");

@@ -9,6 +9,20 @@ exports.createTherapist = async (req, res) => {
       data: { therapist },
     });
   } catch (err) {
+    // Duplicate email error
+    if (err.code === 11000 && err.keyPattern && err.keyPattern.email) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Email already exists. Please use a different email.",
+      });
+    }
+    // Validation errors
+    if (err.name === "ValidationError") {
+      const messages = Object.values(err.errors)
+        .map((el) => el.message)
+        .join(" ");
+      return res.status(400).json({ status: "fail", message: messages });
+    }
     res.status(400).json({ status: "fail", message: err.message });
   }
 };

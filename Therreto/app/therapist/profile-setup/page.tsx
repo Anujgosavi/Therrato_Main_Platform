@@ -1,19 +1,26 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
-import { useToast } from "@/components/ui/use-toast"
-import { useRouter } from "next/navigation"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Upload } from "lucide-react"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Upload } from "lucide-react";
+import { Toaster } from "@/components/ui/toaster";
 
 // Days of the week for availability selection
 const daysOfWeek = [
@@ -24,7 +31,7 @@ const daysOfWeek = [
   { id: "fri", label: "Friday" },
   { id: "sat", label: "Saturday" },
   { id: "sun", label: "Sunday" },
-]
+];
 
 // Time slots for availability
 const timeSlots = [
@@ -40,7 +47,7 @@ const timeSlots = [
   "5:00 PM",
   "6:00 PM",
   "7:00 PM",
-]
+];
 
 // Specialization options
 const specializations = [
@@ -59,7 +66,7 @@ const specializations = [
   "Couples Therapy",
   "Communication",
   "Work-Life Balance",
-]
+];
 
 export default function TherapistProfileSetupPage() {
   const [formData, setFormData] = useState({
@@ -79,63 +86,75 @@ export default function TherapistProfileSetupPage() {
     languages: [] as string[],
     licenseNumber: "",
     certifications: "",
-  })
+    email: "",
+    password: "",
+    passwordConfirm: "",
+  });
 
-  const { toast } = useToast()
-  const router = useRouter()
+  const { toast } = useToast();
+  const router = useRouter();
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSpecializationToggle = (specialization: string) => {
     setFormData((prev) => {
-      const isSelected = prev.selectedSpecializations.includes(specialization)
+      const isSelected = prev.selectedSpecializations.includes(specialization);
       if (isSelected) {
         return {
           ...prev,
-          selectedSpecializations: prev.selectedSpecializations.filter((s) => s !== specialization),
-        }
+          selectedSpecializations: prev.selectedSpecializations.filter(
+            (s) => s !== specialization
+          ),
+        };
       } else {
         return {
           ...prev,
-          selectedSpecializations: [...prev.selectedSpecializations, specialization],
-        }
+          selectedSpecializations: [
+            ...prev.selectedSpecializations,
+            specialization,
+          ],
+        };
       }
-    })
-  }
+    });
+  };
 
   const handleAvailabilityToggle = (day: string) => {
     setFormData((prev) => {
-      const isSelected = prev.availability.includes(day)
-      const newAvailability = isSelected ? prev.availability.filter((d) => d !== day) : [...prev.availability, day]
+      const isSelected = prev.availability.includes(day);
+      const newAvailability = isSelected
+        ? prev.availability.filter((d) => d !== day)
+        : [...prev.availability, day];
 
       // If day is removed, also remove its time slots
-      const newAvailabilityTimes = { ...prev.availabilityTimes }
+      const newAvailabilityTimes = { ...prev.availabilityTimes };
       if (isSelected) {
-        delete newAvailabilityTimes[day]
+        delete newAvailabilityTimes[day];
       } else {
         // Initialize with empty array if adding a new day
-        newAvailabilityTimes[day] = []
+        newAvailabilityTimes[day] = [];
       }
 
       return {
         ...prev,
         availability: newAvailability,
         availabilityTimes: newAvailabilityTimes,
-      }
-    })
-  }
+      };
+    });
+  };
 
   const handleTimeSlotToggle = (day: string, timeSlot: string) => {
     setFormData((prev) => {
-      const currentTimeSlotsForDay = prev.availabilityTimes[day] || []
-      const isSelected = currentTimeSlotsForDay.includes(timeSlot)
+      const currentTimeSlotsForDay = prev.availabilityTimes[day] || [];
+      const isSelected = currentTimeSlotsForDay.includes(timeSlot);
 
       const newTimeSlotsForDay = isSelected
         ? currentTimeSlotsForDay.filter((t) => t !== timeSlot)
-        : [...currentTimeSlotsForDay, timeSlot]
+        : [...currentTimeSlotsForDay, timeSlot];
 
       return {
         ...prev,
@@ -143,42 +162,47 @@ export default function TherapistProfileSetupPage() {
           ...prev.availabilityTimes,
           [day]: newTimeSlotsForDay,
         },
-      }
-    })
-  }
+      };
+    });
+  };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0]
+      const file = e.target.files[0];
       setFormData((prev) => ({
         ...prev,
         profileImage: file,
         previewImage: URL.createObjectURL(file),
-      }))
+      }));
     }
-  }
+  };
 
   const handleLanguageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
+    const value = e.target.value;
     if (value.trim()) {
-      const languageList = value.split(",").map((lang) => lang.trim())
-      setFormData((prev) => ({ ...prev, languages: languageList }))
+      const languageList = value.split(",").map((lang) => lang.trim());
+      setFormData((prev) => ({ ...prev, languages: languageList }));
     } else {
-      setFormData((prev) => ({ ...prev, languages: [] }))
+      setFormData((prev) => ({ ...prev, languages: [] }));
     }
-  }
+  };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
     // Validate form
-    if (!formData.firstName || !formData.lastName || !formData.bio || !formData.price) {
+    if (
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.bio ||
+      !formData.price
+    ) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields.",
         variant: "destructive",
-      })
-      return
+      });
+      return;
     }
 
     if (formData.selectedSpecializations.length === 0) {
@@ -186,8 +210,8 @@ export default function TherapistProfileSetupPage() {
         title: "Missing Specializations",
         description: "Please select at least one specialization.",
         variant: "destructive",
-      })
-      return
+      });
+      return;
     }
 
     if (formData.availability.length === 0) {
@@ -195,40 +219,79 @@ export default function TherapistProfileSetupPage() {
         title: "Missing Availability",
         description: "Please select at least one day of availability.",
         variant: "destructive",
-      })
-      return
+      });
+      return;
     }
 
     // Check if time slots are selected for each available day
     const missingTimeSlots = formData.availability.some(
-      (day) => !formData.availabilityTimes[day] || formData.availabilityTimes[day].length === 0,
-    )
+      (day) =>
+        !formData.availabilityTimes[day] ||
+        formData.availabilityTimes[day].length === 0
+    );
 
     if (missingTimeSlots) {
       toast({
         title: "Missing Time Slots",
-        description: "Please select at least one time slot for each day you're available.",
+        description:
+          "Please select at least one time slot for each day you're available.",
         variant: "destructive",
-      })
-      return
+      });
+      return;
     }
 
-    // In a real app, this would make an API call to save the therapist profile
-    toast({
-      title: "Profile Saved!",
-      description: "Your therapist profile has been created successfully.",
-    })
+    // Prepare data for backend (add email, password, passwordConfirm as required by backend)
+    const payload = {
+      ...formData,
+      price: Number(formData.price),
+      photo: formData.previewImage || "",
+    };
 
-    // Redirect to therapist dashboard
-    router.push("/therapist/appointments")
-  }
+    try {
+      const res = await fetch(
+        "http://localhost:3000/api/v1/therapists/createTherapist",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        toast({
+          title: "Error",
+          description: errorData.message || "Failed to save profile.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      toast({
+        title: "Profile Saved!",
+        description: "Your therapist profile has been created successfully.",
+      });
+
+      // router.push("/therapist/appointments");
+    } catch (error) {
+      toast({
+        title: "Network Error",
+        description: "Could not connect to backend.",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Set Up Your Therapist Profile</h1>
-          <p className="text-gray-600">Complete your profile to start connecting with patients on Therreto.</p>
+          <h1 className="text-3xl font-bold mb-2">
+            Set Up Your Therapist Profile
+          </h1>
+          <p className="text-gray-600">
+            Complete your profile to start connecting with patients on Therreto.
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
@@ -241,7 +304,10 @@ export default function TherapistProfileSetupPage() {
                 <div className="w-32 h-32 relative">
                   {formData.previewImage ? (
                     <Avatar className="w-32 h-32">
-                      <AvatarImage src={formData.previewImage || "/placeholder.svg"} alt="Profile preview" />
+                      <AvatarImage
+                        src={formData.previewImage || "/placeholder.svg"}
+                        alt="Profile preview"
+                      />
                       <AvatarFallback>
                         {formData.firstName.charAt(0)}
                         {formData.lastName.charAt(0)}
@@ -272,7 +338,9 @@ export default function TherapistProfileSetupPage() {
                       <Label htmlFor="title">Title</Label>
                       <Select
                         value={formData.title}
-                        onValueChange={(value) => setFormData((prev) => ({ ...prev, title: value }))}
+                        onValueChange={(value) =>
+                          setFormData((prev) => ({ ...prev, title: value }))
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select title" />
@@ -320,7 +388,9 @@ export default function TherapistProfileSetupPage() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="languages">Languages (comma separated)</Label>
+                    <Label htmlFor="languages">
+                      Languages (comma separated)
+                    </Label>
                     <Input
                       id="languages"
                       name="languages"
@@ -392,17 +462,28 @@ export default function TherapistProfileSetupPage() {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-gray-600 mb-4">
-                Select the areas you specialize in. This helps patients find the right match for their needs.
+                Select the areas you specialize in. This helps patients find the
+                right match for their needs.
               </p>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {specializations.map((specialization) => (
-                  <div key={specialization} className="flex items-center space-x-2">
+                  <div
+                    key={specialization}
+                    className="flex items-center space-x-2"
+                  >
                     <Checkbox
                       id={`spec-${specialization}`}
-                      checked={formData.selectedSpecializations.includes(specialization)}
-                      onCheckedChange={() => handleSpecializationToggle(specialization)}
+                      checked={formData.selectedSpecializations.includes(
+                        specialization
+                      )}
+                      onCheckedChange={() =>
+                        handleSpecializationToggle(specialization)
+                      }
                     />
-                    <Label htmlFor={`spec-${specialization}`} className="text-sm">
+                    <Label
+                      htmlFor={`spec-${specialization}`}
+                      className="text-sm"
+                    >
                       {specialization}
                     </Label>
                   </div>
@@ -456,42 +537,103 @@ export default function TherapistProfileSetupPage() {
                 <div className="space-y-4">
                   <Label className="block">Time Slots Available *</Label>
                   {formData.availability.map((day) => {
-                    const dayLabel = daysOfWeek.find((d) => d.id === day)?.label
+                    const dayLabel = daysOfWeek.find(
+                      (d) => d.id === day
+                    )?.label;
                     return (
                       <div key={day} className="border p-4 rounded-md">
                         <h4 className="font-medium mb-3">{dayLabel}</h4>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                           {timeSlots.map((time) => (
-                            <div key={`${day}-${time}`} className="flex items-center space-x-2">
+                            <div
+                              key={`${day}-${time}`}
+                              className="flex items-center space-x-2"
+                            >
                               <Checkbox
                                 id={`time-${day}-${time}`}
-                                checked={(formData.availabilityTimes[day] || []).includes(time)}
-                                onCheckedChange={() => handleTimeSlotToggle(day, time)}
+                                checked={(
+                                  formData.availabilityTimes[day] || []
+                                ).includes(time)}
+                                onCheckedChange={() =>
+                                  handleTimeSlotToggle(day, time)
+                                }
                               />
-                              <Label htmlFor={`time-${day}-${time}`} className="text-sm">
+                              <Label
+                                htmlFor={`time-${day}-${time}`}
+                                className="text-sm"
+                              >
                                 {time}
                               </Label>
                             </div>
                           ))}
                         </div>
                       </div>
-                    )
+                    );
                   })}
                 </div>
               )}
             </CardContent>
           </Card>
 
+          <Card>
+            <CardHeader>
+              <CardTitle>Account Security</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="email">Email *</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="password">Password *</Label>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="passwordConfirm">Confirm Password *</Label>
+                <Input
+                  id="passwordConfirm"
+                  name="passwordConfirm"
+                  type="password"
+                  value={formData.passwordConfirm}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+            </CardContent>
+          </Card>
+
           <div className="flex justify-end gap-4">
-            <Button variant="outline" type="button" onClick={() => router.back()}>
+            <Button
+              variant="outline"
+              type="button"
+              onClick={() => router.back()}
+            >
               Cancel
             </Button>
-            <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700">
+            <Button
+              type="submit"
+              className="bg-emerald-600 hover:bg-emerald-700"
+            >
               Save Profile
             </Button>
           </div>
         </form>
       </div>
+      <Toaster />
     </div>
-  )
+  );
 }
