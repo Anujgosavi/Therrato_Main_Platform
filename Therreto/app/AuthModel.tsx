@@ -11,6 +11,47 @@ export default function AuthModal({
   onSwitch: () => void;
 }) {
   const [form, setForm] = useState({ email: "", password: "", name: "" });
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage(null);
+
+    try {
+      const endpoint =
+        mode === "signup"
+          ? "http://localhost:3000/api/v1/auth/signup"
+          : "http://localhost:3000/api/v1/auth/signin";
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: form.email,
+          password: form.password,
+        }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setMessage(data.message || "Something went wrong.");
+      } else if (mode === "signup") {
+        setMessage(
+          "Sign up successful! Please check your email to confirm your account."
+        );
+      } else if (mode === "signin") {
+        setMessage("Sign in successful!");
+        setTimeout(() => {
+          onClose();
+        }, 1200); // show message for 1.2 seconds
+      }
+    } catch (err) {
+      setMessage("Network error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
@@ -25,7 +66,7 @@ export default function AuthModal({
         <h2 className="text-2xl font-bold mb-6 text-emerald-600 text-center">
           {mode === "signin" ? "Sign In to Therreto" : "Create Your Account"}
         </h2>
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit}>
           {mode === "signup" && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -76,10 +117,22 @@ export default function AuthModal({
           <button
             type="submit"
             className="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-2 px-4 rounded-md font-medium transition-colors"
+            disabled={loading}
           >
-            {mode === "signin" ? "Sign In" : "Sign Up"}
+            {loading
+              ? mode === "signin"
+                ? "Signing In..."
+                : "Signing Up..."
+              : mode === "signin"
+              ? "Sign In"
+              : "Sign Up"}
           </button>
         </form>
+        {message && (
+          <div className="mt-4 text-center text-sm text-emerald-600">
+            {message}
+          </div>
+        )}
         <div className="mt-4 text-center text-sm text-gray-600">
           {mode === "signin" ? (
             <>

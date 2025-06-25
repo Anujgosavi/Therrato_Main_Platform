@@ -11,7 +11,7 @@ import {
   Users,
   School,
 } from "lucide-react";
-import AuthModal from "./appointments/AuthModel";
+import AuthModal from "./AuthModel";
 
 export default function Home() {
   const [showSignIn, setShowSignIn] = useState(false);

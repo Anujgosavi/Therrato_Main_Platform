@@ -13,6 +13,9 @@ app.use(express.json());
 const therapistRoutes = require("./routes/therapistRoutes");
 app.use("/api/v1/therapists", therapistRoutes);
 
+const authRoutes = require("./routes/authRoutes");
+app.use("/api/v1/auth", authRoutes);
+
 app.get("/api/v1/therreto", (req, res) => {
   res.send("Hello, Node.js!");
 });

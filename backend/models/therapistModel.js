@@ -1,9 +1,11 @@
 const mongoose = require("mongoose");
 
 const therapistSchema = new mongoose.Schema({
+  supabaseId: { type: String, required: true, unique: true }, // Supabase user id
+  email: { type: String, required: true, unique: true },
+  role: { type: String, enum: ["therapist", "admin"], default: "patient" },
   firstName: { type: String, required: [true, "First name is required"] },
   lastName: { type: String, required: [true, "Last name is required"] },
-  email: { type: String, required: [true, "Email is required"], unique: true },
   password: {
     type: String,
     required: [true, "Password is required"],
@@ -22,12 +24,6 @@ const therapistSchema = new mongoose.Schema({
     },
   },
   photo: { type: String, default: "default.jpg" },
-  role: {
-    type: String,
-    enum: ["therapist", "patient", "admin"],
-    default: "patient",
-  },
-  passwordChangedAt: Date,
   ratings: { type: Number, default: 0 },
   title: { type: String, default: "Dr." },
   bio: { type: String },
