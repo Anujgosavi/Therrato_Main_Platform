@@ -42,6 +42,10 @@ export default function AuthModal({
         );
       } else if (mode === "signin") {
         setMessage("Sign in successful!");
+        // Save supabaseId to localStorage
+        if (data && data.user && data.user.id) {
+          localStorage.setItem("supabaseId", data.user.id);
+        }
         setTimeout(() => {
           onClose();
         }, 1200); // show message for 1.2 seconds

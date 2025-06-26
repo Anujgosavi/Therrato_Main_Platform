@@ -240,9 +240,12 @@ export default function TherapistProfileSetupPage() {
       return;
     }
 
+    const supabaseId = localStorage.getItem("supabaseId"); // or from your auth context
+
     // Prepare data for backend (add email, password, passwordConfirm as required by backend)
     const payload = {
       ...formData,
+      supabaseId, // <-- add this line!
       price: Number(formData.price),
       photo: formData.previewImage || "",
     };

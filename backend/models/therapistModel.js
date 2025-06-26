@@ -10,23 +10,6 @@ const therapistSchema = new mongoose.Schema({
   },
   firstName: { type: String, required: [true, "First name is required"] },
   lastName: { type: String, required: [true, "Last name is required"] },
-  password: {
-    type: String,
-    required: [true, "Password is required"],
-    minlength: 8,
-    select: false,
-  },
-  passwordConfirm: {
-    type: String,
-    required: [true, "Please confirm your password"],
-    validate: {
-      // This only works on CREATE and SAVE!!!
-      validator: function (el) {
-        return el === this.password;
-      },
-      message: "Passwords are not the same!",
-    },
-  },
   photo: { type: String, default: "default.jpg" },
   ratings: { type: Number, default: 0 },
   title: { type: String, default: "Dr." },
