@@ -249,7 +249,7 @@ export default function TherapistProfileSetupPage() {
 
     try {
       const res = await fetch(
-        "http://localhost:3000/api/v1/therapists/createTherapist",
+        "https://therrato-main.onrender.com/api/v1/therapists/createTherapist",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

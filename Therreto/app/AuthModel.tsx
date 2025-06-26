@@ -22,8 +22,8 @@ export default function AuthModal({
     try {
       const endpoint =
         mode === "signup"
-          ? "http://localhost:3000/api/v1/auth/signup"
-          : "http://localhost:3000/api/v1/auth/signin";
+          ? "https://therrato-main.onrender.com/api/v1/auth/signup"
+          : "https://therrato-main.onrender.com/api/v1/auth/signin";
       const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
