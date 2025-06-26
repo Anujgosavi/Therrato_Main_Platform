@@ -204,7 +204,7 @@ export default function TherapistProfileSetupPage() {
       });
       return;
     }
-
+    //  gdrhdrhd
     if (formData.selectedSpecializations.length === 0) {
       toast({
         title: "Missing Specializations",
