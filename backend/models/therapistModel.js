@@ -3,7 +3,11 @@ const mongoose = require("mongoose");
 const therapistSchema = new mongoose.Schema({
   supabaseId: { type: String, required: true, unique: true }, // Supabase user id
   email: { type: String, required: true, unique: true },
-  role: { type: String, enum: ["therapist", "admin"], default: "patient" },
+  role: {
+    type: String,
+    enum: ["therapist", "admin", "patient"],
+    default: "therapist",
+  },
   firstName: { type: String, required: [true, "First name is required"] },
   lastName: { type: String, required: [true, "Last name is required"] },
   password: {
