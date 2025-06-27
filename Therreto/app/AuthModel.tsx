@@ -45,6 +45,7 @@ export default function AuthModal({
         // Save supabaseId to localStorage
         if (data && data.user && data.user.id) {
           localStorage.setItem("supabaseId", data.user.id);
+          localStorage.setItem("email", data.user.email); // <-- add this line
         }
         setTimeout(() => {
           onClose();

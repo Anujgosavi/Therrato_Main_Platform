@@ -86,9 +86,9 @@ export default function TherapistProfileSetupPage() {
     languages: [] as string[],
     licenseNumber: "",
     certifications: "",
-    email: "",
-    password: "",
-    passwordConfirm: "",
+    // email: "",
+    // password: "",
+    // passwordConfirm: "",
   });
 
   const { toast } = useToast();
@@ -240,12 +240,23 @@ export default function TherapistProfileSetupPage() {
       return;
     }
 
-    const supabaseId = localStorage.getItem("supabaseId"); // or from your auth context
+    const supabaseId = localStorage.getItem("supabaseId");
+    const email = localStorage.getItem("email"); // <-- get email
+
+    if (!supabaseId || !email) {
+      toast({
+        title: "Not Authenticated",
+        description: "Please sign in first.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     // Prepare data for backend (add email, password, passwordConfirm as required by backend)
     const payload = {
       ...formData,
-      supabaseId, // <-- add this line!
+      supabaseId,
+      email, // <-- add this line!
       price: Number(formData.price),
       photo: formData.previewImage || "",
     };
@@ -443,7 +454,17 @@ export default function TherapistProfileSetupPage() {
                     />
                   </div>
                 </div>
-
+                <div>
+                  <Label htmlFor="experience">Experience</Label>
+                  <Textarea
+                    id="experience"
+                    name="experience"
+                    value={formData.experience}
+                    onChange={handleInputChange}
+                    placeholder="Describe your professional experience, years in practice, etc."
+                    className="min-h-[100px]"
+                  />
+                </div>
                 <div>
                   <Label htmlFor="approach">Therapeutic Approach</Label>
                   <Textarea
@@ -575,47 +596,6 @@ export default function TherapistProfileSetupPage() {
                   })}
                 </div>
               )}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Account Security</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="email">Email *</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="password">Password *</Label>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="passwordConfirm">Confirm Password *</Label>
-                <Input
-                  id="passwordConfirm"
-                  name="passwordConfirm"
-                  type="password"
-                  value={formData.passwordConfirm}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
             </CardContent>
           </Card>
 
