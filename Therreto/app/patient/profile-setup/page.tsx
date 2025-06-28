@@ -81,8 +81,6 @@ export default function PatientProfileSetupPage() {
         title: "Profile Saved!",
         description: "Your patient profile has been created successfully.",
       });
-
-      router.push("/patient/dashboard");
     } catch (error) {
       toast({
         title: "Network Error",

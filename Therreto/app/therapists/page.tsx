@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -15,140 +15,64 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Search, Filter } from "lucide-react";
 import TherapistCard from "@/components/therapist-card";
 
-// Mock data for therapists
-const therapists = [
-  {
-    id: 1,
-    name: "Dr. Kavita Sharma",
-    image:
-      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/therapist-1.jpg-QmL8eBPTMftimvTdtRaUiPMwUz4Spi.png",
-    specializations: ["Anxiety", "Depression", "Trauma"],
-    rating: 4.9,
-    reviewCount: 124,
-    price: 85,
-    gender: "Female",
-    yearsExperience: 8,
-    availability: ["Mon", "Wed", "Fri"],
-  },
-  {
-    id: 2,
-    name: "Dr. Rajiv Gupta",
-    image:
-      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/therapist-2.jpg-e8xyOHUgV9D2Z3zxzI9AYhuHnJAAIs.png",
-    specializations: [
-      "Relationships",
-      "Stress Management",
-      "Work-Life Balance",
-    ],
-    rating: 4.7,
-    reviewCount: 98,
-    price: 75,
-    gender: "Male",
-    yearsExperience: 6,
-    availability: ["Tue", "Thu", "Sat"],
-  },
-  {
-    id: 3,
-    name: "Dr. Anjali Patel",
-    image: "/placeholder.svg?height=200&width=200",
-    specializations: ["PTSD", "Grief", "Family Therapy"],
-    rating: 4.8,
-    reviewCount: 112,
-    price: 90,
-    gender: "Female",
-    yearsExperience: 10,
-    availability: ["Mon", "Tue", "Wed", "Thu"],
-  },
-  {
-    id: 4,
-    name: "Dr. Amit Verma",
-    image: "/placeholder.svg?height=200&width=200",
-    specializations: ["Addiction", "Depression", "Anxiety"],
-    rating: 4.6,
-    reviewCount: 87,
-    price: 80,
-    gender: "Male",
-    yearsExperience: 7,
-    availability: ["Wed", "Thu", "Fri", "Sat"],
-  },
-  {
-    id: 5,
-    name: "Dr. Priya Desai",
-    image: "/placeholder.svg?height=200&width=200",
-    specializations: ["Child Therapy", "ADHD", "Behavioral Issues"],
-    rating: 4.9,
-    reviewCount: 135,
-    price: 95,
-    gender: "Female",
-    yearsExperience: 9,
-    availability: ["Mon", "Tue", "Fri"],
-  },
-  {
-    id: 6,
-    name: "Dr. Suresh Iyer",
-    image: "/placeholder.svg?height=200&width=200",
-    specializations: ["Couples Therapy", "Communication", "Relationships"],
-    rating: 4.8,
-    reviewCount: 104,
-    price: 85,
-    gender: "Male",
-    yearsExperience: 12,
-    availability: ["Tue", "Wed", "Sat", "Sun"],
-  },
-];
+type Therapist = {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  selectedSpecializations?: string[];
+  ratings?: number;
+  [key: string]: any; // Add this if there are more dynamic fields
+};
 
 export default function TherapistsPage() {
+  const [therapists, setTherapists] = useState<Therapist[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [priceRange, setPriceRange] = useState([0, 200]);
   const [specialization, setSpecialization] = useState("");
   const [gender, setGender] = useState("");
   const [showFilters, setShowFilters] = useState(false);
-  const [sortBy, setSortBy] = useState("rating");
+  const [sortBy, setSortBy] = useState("ratings");
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  // Filter therapists based on search and filters
-  const filteredTherapists = therapists
-    .filter((therapist) => {
-      // Search term filter
-      const matchesSearch =
-        therapist.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        therapist.specializations.some((spec) =>
-          spec.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+  // Fetch therapists from backend
+  useEffect(() => {
+    setLoading(true);
+    setError("");
+    const params = new URLSearchParams();
+    if (searchTerm) params.append("name", searchTerm);
+    if (specialization && specialization !== "all" && specialization !== "")
+      params.append("selectedSpecializations", specialization);
+    if (gender && gender !== "any" && gender !== "")
+      params.append("gender", gender);
+    params.append("price[gte]", priceRange[0].toString());
+    params.append("price[lte]", priceRange[1].toString());
 
-      // Price range filter
-      const matchesPrice =
-        therapist.price >= priceRange[0] && therapist.price <= priceRange[1];
+    let sortParam = "";
+    if (sortBy === "rating") sortParam = "-ratings";
+    else if (sortBy === "price_low") sortParam = "price";
+    else if (sortBy === "price_high") sortParam = "-price";
+    else if (sortBy === "experience") sortParam = "-experience";
+    else sortParam = "-ratings";
+    params.append("sort", sortParam);
 
-      // Specialization filter
-      const matchesSpecialization =
-        specialization === "" ||
-        therapist.specializations.some(
-          (spec) => spec.toLowerCase() === specialization.toLowerCase()
-        );
+    params.append("page", page.toString());
+    params.append("limit", "9");
 
-      // Gender filter
-      const matchesGender =
-        gender === "" ||
-        therapist.gender.toLowerCase() === gender.toLowerCase();
-
-      return (
-        matchesSearch && matchesPrice && matchesSpecialization && matchesGender
-      );
-    })
-    .sort((a, b) => {
-      switch (sortBy) {
-        case "rating":
-          return b.rating - a.rating;
-        case "price_low":
-          return a.price - b.price;
-        case "price_high":
-          return b.price - a.price;
-        case "experience":
-          return b.yearsExperience - a.yearsExperience;
-        default:
-          return 0;
-      }
-    });
+    fetch(
+      `https://therrato-main.onrender.com/api/v1/therapists/getAllTherapists?${params.toString()}`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        setTherapists(data.data?.therapists || []);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError("Failed to load therapists.");
+        setLoading(false);
+      });
+  }, [searchTerm, priceRange, specialization, gender, sortBy, page]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -277,7 +201,9 @@ export default function TherapistsPage() {
       <div className="mb-6">
         <div className="flex justify-between items-center">
           <p className="text-gray-600">
-            {filteredTherapists.length} therapists found
+            {loading
+              ? "Loading therapists..."
+              : `${therapists.length} therapists found`}
           </p>
           <Select value={sortBy} onValueChange={setSortBy}>
             <SelectTrigger className="w-[180px]">
@@ -293,13 +219,32 @@ export default function TherapistsPage() {
         </div>
       </div>
 
+      {error && <div className="text-center text-red-500 mb-4">{error}</div>}
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredTherapists.map((therapist) => (
-          <TherapistCard key={therapist.id} therapist={therapist} />
-        ))}
+        {!loading &&
+          therapists.map((therapist) =>
+            therapist && typeof therapist === "object" ? (
+              <TherapistCard
+                key={therapist._id}
+                therapist={{
+                  id: therapist._id, // Use string, not Number()
+                  name: therapist.firstName + " " + therapist.lastName,
+                  image: therapist.photo ?? "/placeholder-profile.png",
+                  specializations: therapist.selectedSpecializations ?? [],
+                  rating: therapist.ratings ?? 0,
+                  reviewCount: therapist.reviewCount ?? 0,
+                  price: therapist.price ?? 0,
+                  gender: therapist.gender ?? "Not specified",
+                  yearsExperience: therapist.experience ?? 0,
+                  availability: therapist.availability ?? [],
+                }}
+              />
+            ) : null
+          )}
       </div>
 
-      {filteredTherapists.length === 0 && (
+      {!loading && therapists.length === 0 && (
         <div className="text-center py-12">
           <p className="text-gray-500 mb-4">
             No therapists match your search criteria.

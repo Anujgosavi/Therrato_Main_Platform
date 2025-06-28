@@ -4,7 +4,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:3001", // <-- set this to your frontend port
+    origin: "*", // For development, allow all. For prod, set your frontend URL.
     credentials: true,
   })
 );

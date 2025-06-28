@@ -31,6 +31,7 @@ export default function RootLayout({
             <Footer />
           </div>
         </ThemeProvider>
+        <Toaster /> {/* <-- This must be here */}
       </body>
     </html>
   );

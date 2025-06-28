@@ -1,4 +1,5 @@
 const Therapist = require("../models/therapistModel");
+const APIFeature = require("../utils/apiFeature");
 
 // Create therapist profile
 exports.createTherapist = async (req, res) => {
@@ -27,10 +28,47 @@ exports.createTherapist = async (req, res) => {
   }
 };
 
-// Get all therapists
+// Get all therapists with filtering, sorting, field limiting, and pagination
 exports.getAllTherapists = async (req, res) => {
   try {
-    const therapists = await Therapist.find();
+    // Build filter object
+    const queryObj = { ...req.query };
+    const excludedFields = ["page", "sort", "limit", "fields", "name"];
+    excludedFields.forEach((el) => delete queryObj[el]);
+
+    // Advanced filtering (gte, gt, lte, lt)
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+    let filter = JSON.parse(queryStr);
+
+    // Combine all filters using $and
+    const andFilters = [];
+
+    // Add normal filters
+    if (Object.keys(filter).length > 0) {
+      andFilters.push(filter);
+    }
+
+    // Add name search if present
+    if (req.query.name) {
+      const regex = new RegExp(req.query.name, "i");
+      andFilters.push({
+        $or: [{ firstName: regex }, { lastName: regex }],
+      });
+    }
+
+    // Final query
+    let mongoQuery = andFilters.length > 0 ? { $and: andFilters } : {};
+
+    let query = Therapist.find(mongoQuery);
+
+    // Use APIFeature for sort, fields, paginate
+    const features = new APIFeature(query, req.query)
+      .sort()
+      .limitFields()
+      .paginate();
+
+    const therapists = await features.query;
     res.status(200).json({
       status: "success",
       results: therapists.length,
