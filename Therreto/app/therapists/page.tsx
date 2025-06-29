@@ -124,12 +124,12 @@ export default function TherapistsPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Debug Panel - Remove in production */}
-      <div className="mb-4 p-4 bg-gray-100 rounded-md">
+      {/* <div className="mb-4 p-4 bg-gray-100 rounded-md">
         <h3 className="font-bold mb-2">Debug Information</h3>
         <div className="text-sm mb-2">API URL: {apiUrl}</div>
         <div className="text-sm">Response Count: {therapists.length}</div>
         {error && <div className="text-sm text-red-500">Error: {error}</div>}
-      </div>
+      </div> */}
 
       {/* Rest of your UI remains the same */}
       <div className="mb-8">
@@ -140,8 +140,139 @@ export default function TherapistsPage() {
         </p>
       </div>
 
-      {/* Search and Filter UI (same as your hardcoded version) */}
-      {/* ... */}
+      {/* Search and Filter UI */}
+      <div className="mb-8">
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="relative flex-grow">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <Input
+              placeholder="Search by name..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <Button
+            variant="outline"
+            onClick={() => setShowFilters(!showFilters)}
+            className="md:w-auto w-full flex items-center gap-2"
+          >
+            <Filter className="h-4 w-4" />
+            Filters
+          </Button>
+        </div>
+
+        {showFilters && (
+          <Card className="mt-4">
+            <CardContent className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Price Range</label>
+                  <div className="pt-4">
+                    <Slider
+                      defaultValue={[0, 200]}
+                      max={200}
+                      step={5}
+                      value={priceRange}
+                      onValueChange={setPriceRange}
+                      className="mb-6"
+                    />
+                    <div className="flex justify-between text-sm text-gray-500">
+                      <span>${priceRange[0]}</span>
+                      <span>${priceRange[1]}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Specialization</label>
+                  <Select
+                    value={specialization}
+                    onValueChange={setSpecialization}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select specialization" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Specializations</SelectItem>
+                      <SelectItem value="Anxiety">Anxiety</SelectItem>
+                      <SelectItem value="Depression">Depression</SelectItem>
+                      <SelectItem value="Trauma">Trauma</SelectItem>
+                      <SelectItem value="Relationships">
+                        Relationships
+                      </SelectItem>
+                      <SelectItem value="Stress Management">
+                        Stress Management
+                      </SelectItem>
+                      <SelectItem value="PTSD">PTSD</SelectItem>
+                      <SelectItem value="Grief">Grief</SelectItem>
+                      <SelectItem value="Addiction">Addiction</SelectItem>
+                      <SelectItem value="Child Therapy">
+                        Child Therapy
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Gender</label>
+                  <Select value={gender} onValueChange={setGender}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select gender" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="any">Any Gender</SelectItem>
+                      <SelectItem value="Female">Female</SelectItem>
+                      <SelectItem value="Male">Male</SelectItem>
+                      <SelectItem value="Non-binary">Non-binary</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="flex justify-end mt-6">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setSearchTerm("");
+                    setPriceRange([0, 200]);
+                    setSpecialization("");
+                    setGender("");
+                  }}
+                  className="mr-2"
+                >
+                  Reset
+                </Button>
+                <Button
+                  onClick={() => setShowFilters(false)}
+                  className="bg-emerald-600 hover:bg-emerald-700"
+                >
+                  Apply Filters
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+
+      {/* Sorting UI */}
+      <div className="mb-6">
+        <div className="flex justify-between items-center">
+          <p className="text-gray-600">
+            {loading
+              ? "Loading therapists..."
+              : `${therapists.length} therapists found`}
+          </p>
+          <Select value={sortBy} onValueChange={setSortBy}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="rating">Sort by Rating</SelectItem>
+              <SelectItem value="price_low">Price: Low to High</SelectItem>
+              <SelectItem value="price_high">Price: High to Low</SelectItem>
+              <SelectItem value="experience">Most Experienced</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
 
       {loading ? (
         <div className="flex justify-center items-center h-64">
