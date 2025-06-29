@@ -3,6 +3,12 @@ const cors = require("cors");
 const app = express();
 
 app.use(express.json());
+app.use(
+  cors({
+    origin: ["http://localhost:3001", "https://therrato-main.onrender.com"], // add your frontend and backend URLs here
+    credentials: true,
+  })
+);
 
 const therapistRoutes = require("./routes/therapistRoutes");
 app.use("/api/v1/therapists", therapistRoutes);
