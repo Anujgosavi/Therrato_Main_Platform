@@ -2,12 +2,6 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 
-app.use(
-  cors({
-    origin: "*", // For development, allow all. For prod, set your frontend URL.
-    credentials: true,
-  })
-);
 app.use(express.json());
 
 const therapistRoutes = require("./routes/therapistRoutes");
