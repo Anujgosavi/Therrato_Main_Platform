@@ -5,7 +5,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: ["http://localhost:3001", "https://therrato-main.onrender.com"], // add your frontend and backend URLs here
+    origin: "*", // add your frontend and backend URLs here
     credentials: true,
   })
 );
